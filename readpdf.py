@@ -66,10 +66,12 @@ def parse():
 
             for out in layout:
                 if hasattr(out, "get_text"):
-                    # 去除特殊内容 's 'm 're n't
-                    text = re.sub(r'(\d|\'s|\'m|\'re|n\'t)', '', out.get_text())
+                    # 去除特殊内容，如数字  's 'm 're n't
+                    text = re.sub(r'(\d|\'s|\'m|\'re|n\'t)',
+                                  '', out.get_text())
                     # 去除标点符号，且将多个空格转化为一个空格
-                    text2 = re.sub(r'[\s+\?\.\!\/_,$%^*(+\"\']+|[+——！，。？、~@#￥%……&*（）：]+', ' ', text)
+                    text2 = re.sub(
+                        r'[\s+\?\.\!\/_,$%^*(+\"\']+|[+——！，。？、~@#￥%……&*（）：]+', ' ', text)
                     words = text2.split()
                     for word in words:
                         w = word.lower()
@@ -82,10 +84,10 @@ def parse():
                             obj[w] = 1
     for key in obj:
         connection = pymysql.connect(host='localhost',
-                                        user='root',
-                                        password='',
-                                        db='test',
-                                        charset='utf8mb4')
+                                     user='root',
+                                     password='',
+                                     db='test',
+                                     charset='utf8mb4')
         try:
             # 获取会话指针
             with connection.cursor() as cursor:
@@ -95,10 +97,11 @@ def parse():
                 cursor.execute(
                     sql, (key, obj[key], round(obj[key] / amount * 100, 4)))
                 # 提交
-                connection.commit()    
+                connection.commit()
         finally:
             connection.close()
     print(amount)
+
 
 if __name__ == '__main__':
     parse()
