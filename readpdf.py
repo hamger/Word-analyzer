@@ -73,7 +73,7 @@ def parse():
                     tx = re.sub(r'(\d|\'s|\'m|\'re|n\'t)', '', t)
                     # 去除标点符号，且将多个空格转化为一个空格
                     txt = re.sub(
-                        r'[\s+\?\.\!\/_,:;\-$%^*(+\"\']+|[+——！，。？、~@#￥%……&*（）：]+', ' ', tx)
+                        r'[\s+\?\.\!\/_,`:;\-$%^*)(+\"\']+|[+——！，。？、~@#￥%……&*（）：]+', ' ', tx)
                     for word in txt.split():
                         w = word.lower()
                         amount = amount + 1
@@ -104,6 +104,7 @@ def parse():
     # 断开数据库连接
     connection.close()
     print("总词数: %s" % amount)
+    # print('als)' in obj)
     # print(json.dumps(obj, sort_keys=True, indent=4, separators=(',', ':')))
 
 
