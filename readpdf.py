@@ -66,41 +66,45 @@ def parse():
 
             for out in layout:
                 if hasattr(out, "get_text"):
-                    # 去除特殊内容，如数字  's 'm 're n't
-                    text = re.sub(r'(\d|\'s|\'m|\'re|n\'t)',
-                                  '', out.get_text())
+                    # print(out.get_text())
+                    # 去除无法识别的文字转化成的 (cid:12) 之类的代码
+                    t = re.sub(r'\(cid:[\d]*\)', '', out.get_text())
+                    # 去除特殊内容，如数字、's、'm、're、n't
+                    tx = re.sub(r'(\d|\'s|\'m|\'re|n\'t)', '', t)
                     # 去除标点符号，且将多个空格转化为一个空格
-                    text2 = re.sub(
-                        r'[\s+\?\.\!\/_,$%^*(+\"\']+|[+——！，。？、~@#￥%……&*（）：]+', ' ', text)
-                    words = text2.split()
-                    for word in words:
+                    txt = re.sub(
+                        r'[\s+\?\.\!\/_,:;\-$%^*(+\"\']+|[+——！，。？、~@#￥%……&*（）：]+', ' ', tx)
+                    for word in txt.split():
                         w = word.lower()
-                        if w.find('cid:') > -1:
-                            continue
                         amount = amount + 1
                         if obj.__contains__(w):
                             obj[w] = obj[w] + 1
                         else:
                             obj[w] = 1
+    # 连接数据库
+    connection = pymysql.connect(host='localhost',
+                                 user='root',
+                                 password='',
+                                 db='test',
+                                 charset='utf8mb4')
+
+    # 清空 words 表，避免受前一次计算结果影响
+    connection.cursor().execute('truncate table `words`')
     for key in obj:
-        connection = pymysql.connect(host='localhost',
-                                     user='root',
-                                     password='',
-                                     db='test',
-                                     charset='utf8mb4')
-        try:
-            # 获取会话指针
-            with connection.cursor() as cursor:
-                # 创建一条sql语句
-                sql = "REPLACE INTO `words` (`word`, `count`, `probability`) VALUES(%s, %s, %s)"
-                # 执行sql语句
-                cursor.execute(
-                    sql, (key, obj[key], round(obj[key] / amount * 100, 4)))
-                # 提交
-                connection.commit()
-        finally:
-            connection.close()
-    print(amount)
+        # 获取会话指针
+        with connection.cursor() as cursor:
+            # 创建一条sql语句
+            sql = "REPLACE INTO `words` (`word`, `count`, `probability`) VALUES(%s, %s, %s)"
+            # 执行sql语句
+            cursor.execute(
+                sql, (key, obj[key], round(obj[key] / amount * 10000, 2)))
+            # 提交
+            connection.commit()
+
+    # 断开数据库连接
+    connection.close()
+    print("总词数: %s" % amount)
+    # print(json.dumps(obj, sort_keys=True, indent=4, separators=(',', ':')))
 
 
 if __name__ == '__main__':
