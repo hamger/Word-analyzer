@@ -67,8 +67,10 @@ def parse():
 
             for out in layout:
                 if hasattr(out, "get_text"):
-                    text = re.sub(r"[\s+\.\!\/_,$%^*(+\"\']+|[+——！，。？、~@#￥%……&*（）：？]+", " ", out.get_text())
-                    text2 = re.sub(r'\s+', ' ', text)
+                    # 去除特殊内容 's 'm 're n't
+                    text = re.sub(r'(\'s|\'m|\'re|n\'t)', ' ', out.get_text())
+                    # 去除标点符号，且将多个空格转化为一个空格
+                    text2 = re.sub(r'[\s+\?\.\!\/_,$%^*(+\"\']+|[+——！，。？、~@#￥%……&*（）：]+', ' ', text)
                     words = text2.split()
                     for word in words:
                         if word.find('cid:') > -1:
