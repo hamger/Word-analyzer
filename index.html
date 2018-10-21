@@ -58,18 +58,18 @@
         <th>单词</th>
         <th>出现次数</th>
         <th>出现概率（‱）</th>
-        <th>释义</th>
       </tr>
     </table>
   </div>
   <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
   <script>
-    $('#pro-from').val(1)
+    $('#pro-from').val(1.5)
     $('#pro-to').val(2)
     getList()
     function getList(proFrom, proTo) {
-      var proFrom = $('#pro-from').val() || 4.5
-      var proTo = $('#pro-to').val() || 500
+      var proFrom = $('#pro-from').val() || 0
+      var proTo = $('#pro-to').val() || 10000
+      $('#all-select').prop("checked",false)
       $.ajax({
         url: 'http://localhost:5001/list?proFrom=' + proFrom + '&proTo=' + proTo,
         type: 'get',
@@ -80,10 +80,9 @@
           data.forEach(function (e, i) {
             $('#word-table').append('<tr class="word-item"><td><label class="checkbox-inline"><input class="word-select" type="checkbox" value="">' +
               (i + 1) + '</label>' +
-              '</td><td class="word-text">' + e[0] +
+              '</td><td><a target="_blank" href="http://dict.youdao.com/search?q=' + e[0] + '">' + e[0] + '<a>' +
               '</td><td>' + e[1] +
               '</td><td>' + e[2] +
-              '</td><td><a target="_blank" href="http://dict.youdao.com/search?q=' + e[0] + '">点击查看<a>' +
               '</td></tr>')
           });
         },
@@ -91,16 +90,16 @@
     }
     $('#all-select').click(function () {
       if ($(this).is(":checked")) {
-        $('.word-select').attr('checked', true)
+        $('.word-select').prop('checked', true)
       } else {
-        $('.word-select').attr('checked', false)
+        $('.word-select').prop('checked', false)
       }
     })
     $('#addMyWord').click(function () {
       var list = []
       $('.word-item').each(function (i, item) {
         if ($(item).find('.word-select').is(":checked")) {
-          list.push($(item).find('.word-text').text())
+          list.push($(item).find('a').text())
         }
       })
       $.ajax({
@@ -109,10 +108,9 @@
         data: JSON.stringify(list),
         dataType: 'json',
         success: function (res) {
-          // if(res.success) alert(res.msg)
+          // if(res.success) console.log(res.msg)
         },
       });
-      console.log(list)
     })
   </script>
 </body>
