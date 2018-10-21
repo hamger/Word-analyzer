@@ -19,17 +19,42 @@
     #top-box {
       margin-bottom: 20px;
     }
+    .input-group-box {
+      overflow: hidden;
+      display: inline-block;
+      width: 100px;
+    }
+    #addMyWord {
+      margin-top: 20px;
+    }
   </style>
 </head>
 
 <body>
   <div id='container'>
     <div id='top-box'>
-      <button type="button" class="btn btn-default" id='addMyWord'>已掌握</button>
+      <form class="form-inline">
+        <div class="form-group">
+          <div class="input-group">
+            <div class="input-group-addon">出现概率</div>
+            <input type="text" class="form-control" id="pro-from" placeholder="最小概率">
+            <div class="input-group-addon">‱</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="input-group">
+            <div class="input-group-addon">~</div>
+            <input type="text" class="form-control" id="pro-to" placeholder="最大概率">
+            <div class="input-group-addon">‱</div>
+          </div>
+        </div>
+        <button onclick="getList()" type="button" class="btn btn-primary">查询</button>
+      </form>
+      <button type="button" class="btn btn-default" id='addMyWord'>过滤</button>
     </div>
     <table id="word-table" class="table table-hover">
       <tr>
-        <th>选择</th>
+        <th><label class="checkbox-inline"><input id="all-select" type="checkbox" value="">全选</label></th>
         <th>单词</th>
         <th>出现次数</th>
         <th>出现概率（‱）</th>
@@ -39,26 +64,40 @@
   </div>
   <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
   <script>
-    $.ajax({
-      url: 'http://localhost:5001/list2',
-      type: 'get',
-      // data: data,
-      dataType: 'json',
-      success: function (res) {
-        var data = res.data
-        data.forEach(function (e, i) {
-          $('#word-table').append('<tr class="word-item"><td><label class="checkbox-inline"><input class="word-select" type="checkbox" value=""></label>' + 
-            '</td><td class="word-text">' + e[0] +
-            '</td><td>' + e[1] +
-            '</td><td>' + e[2] +
-            '</td><td><a target="_blank" href="http://dict.youdao.com/search?q=' + e[0] + '">点击查看<a>'
-            + '</td></tr>')
-        });
-      },
-    });
+    $('#pro-from').val(4.5) 
+    $('#pro-to').val(500) 
+    getList()
+    function getList (proFrom, proTo) {
+      var proFrom = $('#pro-from').val() || 4.5
+      var proTo = $('#pro-to').val() || 500
+      $.ajax({
+        url: 'http://localhost:5001/list?proFrom=' + proFrom + '&proTo=' + proTo,
+        type: 'get',
+        dataType: 'json',
+        success: function (res) {
+          var data = res.data
+          $('.word-item').remove()
+          data.forEach(function (e, i) {
+            $('#word-table').append('<tr class="word-item"><td><label class="checkbox-inline"><input class="word-select" type="checkbox" value=""></label>' +
+              '</td><td class="word-text">' + e[0] +
+              '</td><td>' + e[1] +
+              '</td><td>' + e[2] +
+              '</td><td><a target="_blank" href="http://dict.youdao.com/search?q=' + e[0] + '">点击查看<a>'
+              + '</td></tr>')
+          });
+        },
+      });
+    }
+    $('#all-select').click(function () {
+      if ($(this).is(":checked")) {
+        $('.word-select').attr('checked', true)
+      } else {
+        $('.word-select').attr('checked', false)
+      }
+    })
     $('#addMyWord').click(function () {
       var list = []
-      $('.word-item').each(function(i, item) {
+      $('.word-item').each(function (i, item) {
         if ($(item).find('.word-select').is(":checked")) {
           list.push($(item).find('.word-text').text())
         }

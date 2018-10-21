@@ -42,15 +42,16 @@ def allow_cross_domain(fun):
 
     return wrapper_fun
 
-
-@app.route('/list2', methods=['get'])
+# 列表查询
+@app.route('/list', methods=['get'])
 @allow_cross_domain
-def getList2():
-    print(request.get_data())
+def getList():
+    # print(request.args.get())
     db = connect()
     cursor = db.cursor()
     cursor.execute(
-        'select * from words where probability > 100 ORDER BY probability DESC'
+        'select * from words where probability >= %s and probability <= %s ORDER BY probability DESC',
+        (request.args.get('proFrom'), request.args.get('proTo'))
     )
     data = cursor.fetchall()
     db.close()
