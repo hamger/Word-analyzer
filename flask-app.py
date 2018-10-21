@@ -24,13 +24,10 @@ def connect():
 
 
 # 规定接口的数据返回格式
-def baseReturn(data, success=True, msg='OK'):
-    json_data = json.dumps({
-        'data': data,
-        'success': success,
-        'msg': msg
-    })
+def baseReturn(data='', msg='OK', success=True):
+    json_data = json.dumps({'data': data, 'success': success, 'msg': msg})
     return json_data
+
 
 # 允许跨域访问
 def allow_cross_domain(fun):
@@ -49,12 +46,34 @@ def allow_cross_domain(fun):
 @app.route('/list2', methods=['get'])
 @allow_cross_domain
 def getList2():
+    print(request.get_data())
     db = connect()
     cursor = db.cursor()
-    cursor.execute('select * from words where count > 2  and count <= 4')
-    data = cursor.fetchone()
+    cursor.execute(
+        'select * from words where probability > 100 ORDER BY probability DESC'
+    )
+    data = cursor.fetchall()
     db.close()
     return baseReturn(data)
+
+
+# 添加我掌握的单词
+@app.route('/addMyWord', methods=['post'])
+@allow_cross_domain
+def addMyWord():
+    words = json.loads(request.get_data())
+    db = connect()
+    for word in words:
+        # 获取会话指针
+        with db.cursor() as cursor:
+            # 创建一条 sql 语句，如果表名或字段名中带 - ，需要使用 ` 包裹
+            sql = "REPLACE INTO `my-words` (word) VALUES(%s)"
+            # 执行sql语句
+            cursor.execute(sql, (word))
+            # 提交
+            db.commit()
+    db.close()
+    return baseReturn('', '加入成功')
 
 
 if __name__ == '__main__':

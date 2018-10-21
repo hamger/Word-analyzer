@@ -13,11 +13,30 @@
       padding: 0;
       font-size: 14px;
     }
+    #container {
+      padding: 20px;
+    }
+    #top-box {
+      margin-bottom: 20px;
+    }
   </style>
 </head>
 
 <body>
-  <div id='view'></div>
+  <div id='container'>
+    <div id='top-box'>
+      <button type="button" class="btn btn-default" id='addMyWord'>已掌握</button>
+    </div>
+    <table id="word-table" class="table table-hover">
+      <tr>
+        <th>选择</th>
+        <th>单词</th>
+        <th>出现次数</th>
+        <th>出现概率（‱）</th>
+        <th>释义</th>
+      </tr>
+    </table>
+  </div>
   <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
   <script>
     $.ajax({
@@ -26,9 +45,35 @@
       // data: data,
       dataType: 'json',
       success: function (res) {
-        $('#view').text(JSON.stringify(res))
+        var data = res.data
+        data.forEach(function (e, i) {
+          $('#word-table').append('<tr class="word-item"><td><label class="checkbox-inline"><input class="word-select" type="checkbox" value=""></label>' + 
+            '</td><td class="word-text">' + e[0] +
+            '</td><td>' + e[1] +
+            '</td><td>' + e[2] +
+            '</td><td><a target="_blank" href="http://dict.youdao.com/search?q=' + e[0] + '">点击查看<a>'
+            + '</td></tr>')
+        });
       },
     });
+    $('#addMyWord').click(function () {
+      var list = []
+      $('.word-item').each(function(i, item) {
+        if ($(item).find('.word-select').is(":checked")) {
+          list.push($(item).find('.word-text').text())
+        }
+      })
+      $.ajax({
+        url: 'http://localhost:5001/addMyWord',
+        type: 'post',
+        data: JSON.stringify(list),
+        dataType: 'json',
+        success: function (res) {
+          // if(res.success) alert(res.msg)
+        },
+      });
+      console.log(list)
+    })
   </script>
 </body>
 
