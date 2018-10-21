@@ -42,6 +42,7 @@ def allow_cross_domain(fun):
 
     return wrapper_fun
 
+
 # 列表查询
 @app.route('/list', methods=['get'])
 @allow_cross_domain
@@ -49,10 +50,10 @@ def getList():
     # print(request.args.get())
     db = connect()
     cursor = db.cursor()
-    cursor.execute(
-        'select * from words where probability >= %s and probability <= %s ORDER BY probability DESC',
-        (request.args.get('proFrom'), request.args.get('proTo'))
-    )
+    # 获取 过滤掉 my-words 表中的单词，且指定出现概率范围下的，倒序排列的数据
+    sql = 'select * from words where (select count(1) as num from `my-words` where `my-words`.word = words.word) = 0 and probability >= %s and probability <= %s ORDER BY probability DESC'
+    cursor.execute(sql,
+                   (request.args.get('proFrom'), request.args.get('proTo')))
     data = cursor.fetchall()
     db.close()
     return baseReturn(data)
