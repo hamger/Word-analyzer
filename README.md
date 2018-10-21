@@ -6,7 +6,7 @@ A counter for show probability of each word's occurrence in the book.
 
 ### 2018.10.21
 
-> 接入数据库，实现列表查询接口和自定义过滤单词
+> 接入数据库，实现列表查询和过滤指定单词的功能
 
 ### 2018.10.20
 
