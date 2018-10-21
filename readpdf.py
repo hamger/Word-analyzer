@@ -75,6 +75,7 @@ def parse():
                     txt = re.sub(
                         r'[\s+\?\.\!\/_,`:;\-$%^*)(+\"\']+|[+——！，。？、~@#￥%……&*（）：]+', ' ', tx)
                     for word in txt.split():
+                        # 将单词转化为小写
                         w = word.lower()
                         amount = amount + 1
                         if obj.__contains__(w):
@@ -89,12 +90,12 @@ def parse():
                                  charset='utf8mb4')
 
     # 清空 words 表，避免受前一次计算结果影响
-    connection.cursor().execute('truncate table `words`')
+    connection.cursor().execute('truncate table words')
     for key in obj:
         # 获取会话指针
         with connection.cursor() as cursor:
             # 创建一条sql语句
-            sql = "REPLACE INTO `words` (`word`, `count`, `probability`) VALUES(%s, %s, %s)"
+            sql = "REPLACE INTO words (word, count, probability) VALUES(%s, %s, %s)"
             # 执行sql语句
             cursor.execute(
                 sql, (key, obj[key], round(obj[key] / amount * 10000, 2)))
