@@ -4,6 +4,7 @@
 from flask import Flask
 from flask import request, jsonify
 import json
+import pymysql
 
 app = Flask(__name__)
 
@@ -11,6 +12,27 @@ from functools import wraps
 from flask import make_response
 
 
+# 连接数据库
+def connect():
+    connection = pymysql.connect(
+        host='localhost',
+        user='root',
+        password='',
+        db='test',
+        charset='utf8mb4')
+    return connection
+
+
+# 规定接口的数据返回格式
+def baseReturn(data, success=True, msg='OK'):
+    json_data = json.dumps({
+        'data': data,
+        'success': success,
+        'msg': msg
+    })
+    return json_data
+
+# 允许跨域访问
 def allow_cross_domain(fun):
     @wraps(fun)
     def wrapper_fun(*args, **kwargs):
@@ -20,39 +42,19 @@ def allow_cross_domain(fun):
         allow_headers = "Referer,Accept,Origin,User-Agent"
         rst.headers['Access-Control-Allow-Headers'] = allow_headers
         return rst
+
     return wrapper_fun
 
 
-@app.route('/', methods=['GET', 'POST'])
-def home():
-    return '<h1>Home</h1>'
-
-
-@app.route('/signin', methods=['GET'])
-def signin_form():
-    return '''<form action="/signin" method="post">
-              <p><input name="username"></p>
-              <p><input name="password" type="password"></p>
-              <p><button type="submit">Sign In</button></p>
-              </form>'''
-
-
-@app.route('/signin', methods=['POST'])
-def signin():
-    # 需要从request对象读取表单内容：
-    if request.form['username'] == 'admin' and request.form['password'] == 'password':
-        return '<h3>Hello, admin!</h3>'
-    return '<h3>Bad username or password.</h3>'
-
-
-@app.route('/list', methods=['get'])
+@app.route('/list2', methods=['get'])
 @allow_cross_domain
-def getList():
-    ddd = {
-        'success': True,
-        'strr': [12, 12, 4, 5, 6, 78, 11]
-    }
-    return jsonify(ddd)
+def getList2():
+    db = connect()
+    cursor = db.cursor()
+    cursor.execute('select * from words where count > 2  and count <= 4')
+    data = cursor.fetchone()
+    db.close()
+    return baseReturn(data)
 
 
 if __name__ == '__main__':
