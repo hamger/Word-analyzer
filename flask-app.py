@@ -11,12 +11,12 @@ app = Flask(__name__)
 from functools import wraps
 from flask import make_response
 from html_downloader import download
-from html_parser import parse
+from html_parser import prase
 
 # 爬取数据
 def carw(url):
     html_cont = download(url)
-    return parse(html_cont)
+    return prase(html_cont)
 
 
 # 连接数据库

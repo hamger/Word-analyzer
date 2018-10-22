@@ -19,7 +19,7 @@ def _get_data(soup):
     return res_data
 
 
-def parse(html_cont):
+def prase(html_cont):
     if html_cont is None:
         return
     soup = bs(html_cont, 'html.parser', from_encoding='utf-8')
