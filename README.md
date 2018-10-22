@@ -6,6 +6,10 @@ A counter for show probability of each word's occurrence in the book.
 
 ### 2018.10.21
 
+> 添加页面置顶和置底功能
+
+### 2018.10.21
+
 > 接入数据库，实现列表查询和过滤指定单词的功能
 
 ### 2018.10.20

@@ -10,6 +10,13 @@ app = Flask(__name__)
 
 from functools import wraps
 from flask import make_response
+from html_downloader import download
+from html_parser import parse
+
+# 爬取数据
+def carw(url):
+    html_cont = download(url)
+    return parse(html_cont)
 
 
 # 连接数据库
@@ -76,6 +83,16 @@ def addMyWord():
             db.commit()
     db.close()
     return baseReturn('', '加入成功')
+
+
+# 查询单词
+@app.route('/checkWord', methods=['get'])
+@allow_cross_domain
+def checkWord():
+    word = request.args.get('word')
+    url = 'http://dict.youdao.com/search?q=' + word
+    data = carw(url)
+    return baseReturn(data, '查询成功')
 
 
 if __name__ == '__main__':
