@@ -27,6 +27,39 @@
     #addMyWord {
       margin-left: 20px;
     }
+    #hg-to-top,  #hg-to-bottom{
+      display: none;
+      position: fixed;
+      background-color: rgba(70, 70, 70, 0.5);
+      z-index: 99;
+      height: 30px;
+      width: 30px;
+      border-radius: 6px;
+      bottom: 20px;
+      right: 20px;
+    }
+    .hg-to-top-arrows {
+      display: inline-block;
+      height: 12px;
+      width: 12px;
+      border-left: 2px solid #fff;
+      border-top: 2px solid #fff;
+      position: absolute;
+      top: 13px;
+      left: 9px;
+      transform: rotate(45deg);
+    }
+    .hg-to-bottom-arrows {
+      display: inline-block;
+      height: 12px;
+      width: 12px;
+      border-left: 2px solid #fff;
+      border-top: 2px solid #fff;
+      position: absolute;
+      top: 7px;
+      left: 9px;
+      transform: rotate(-135deg);
+    }
   </style>
 </head>
 
@@ -60,6 +93,12 @@
         <th>出现概率（‱）</th>
       </tr>
     </table>
+    <div id="hg-to-top">
+      <span class="hg-to-top-arrows"></span>
+    </div>
+    <div id="hg-to-bottom">
+      <span class="hg-to-bottom-arrows"></span>
+    </div>
   </div>
   <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
   <script>
@@ -69,7 +108,7 @@
     function getList(proFrom, proTo) {
       var proFrom = $('#pro-from').val() || 0
       var proTo = $('#pro-to').val() || 10000
-      $('#all-select').prop("checked",false)
+      $('#all-select').prop("checked", false)
       $.ajax({
         url: 'http://localhost:5001/list?proFrom=' + proFrom + '&proTo=' + proTo,
         type: 'get',
@@ -88,6 +127,25 @@
         },
       });
     }
+    $('#hg-to-top').click(function () {
+      window.scroll(0, 0);
+    })
+    $('#hg-to-bottom').click(function () {
+      window.scroll(0, document.body.clientHeight);
+    })
+    var toTopBtn = document.getElementById('hg-to-top');
+    var toBottomBtn = document.getElementById('hg-to-bottom');
+    window.addEventListener('scroll', (e) => {
+      var scrollTop = document.documentElement.scrollTop || window.pageYOffset || document.body.scrollTop;
+      if (scrollTop > window.screen.availHeight) {
+        toTopBtn.style.display = 'block';
+        toBottomBtn.style.display = 'none';
+      }
+      else {
+        toTopBtn.style.display = 'none';
+        toBottomBtn.style.display = 'block';
+      }
+    });
     $('#all-select').click(function () {
       if ($(this).is(":checked")) {
         $('.word-select').prop('checked', true)
@@ -112,6 +170,20 @@
         },
       });
     })
+    $('#goTop').click(function () {
+      $('body,html').stop().animate({
+        'scrollTop': 0,
+        'duration': 100,
+        'easing': 'ease-in'
+      })
+    });
+    $('#goTop').click(function () {
+      $('body,html').stop().animate({
+        'scrollTop': 0,
+        'duration': 100,
+        'easing': 'ease-in'
+      })
+    });
   </script>
 </body>
 
