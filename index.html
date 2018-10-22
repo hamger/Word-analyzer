@@ -89,6 +89,7 @@
       <tr>
         <th><label class="checkbox-inline"><input id="all-select" type="checkbox" value="">全选</label></th>
         <th>单词</th>
+        <!-- <th>释义</th> -->
         <th>出现次数</th>
         <th>出现概率（‱）</th>
       </tr>
@@ -120,6 +121,7 @@
             $('#word-table').append('<tr class="word-item"><td><label class="checkbox-inline"><input class="word-select" type="checkbox" value="">' +
               (i + 1) + '</label>' +
               '</td><td><a target="_blank" href="http://dict.youdao.com/search?q=' + e[0] + '">' + e[0] + '<a>' +
+              // '</td><td class="word-meaning">' + '点击查看' +
               '</td><td>' + e[1] +
               '</td><td>' + e[2] +
               '</td></tr>')
@@ -152,6 +154,17 @@
       } else {
         $('.word-select').prop('checked', false)
       }
+    })
+    $(document).on('click', function () {
+      var word = $(this).parent().find('a').text()
+      $.ajax({
+        url: 'http://localhost:5001/checkWord?word=' + word,
+        type: 'get',
+        dataType: 'json',
+        success: function (res) {
+          console.log(res)
+        },
+      });
     })
     $('#addMyWord').click(function () {
       var list = []
