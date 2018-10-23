@@ -13,6 +13,10 @@ python readpdf.py bookname
 
 ## Changelog
 
+### 2018.10.23
+
+> 支持统计多本书
+
 ### 2018.10.21
 
 > 添加页面置顶和置底功能
