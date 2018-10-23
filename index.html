@@ -6,7 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>word-counter</title>
-  <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+  <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+  <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
   <style>
     * {
       margin: 0;
@@ -61,24 +63,39 @@
       left: 9px;
       transform: rotate(-135deg);
     }
+    .dropdown {
+      display: inline-block;
+    }
   </style>
 </head>
 
 <body>
   <div id='container'>
     <div id='top-box'>
+      <div class="dropdown">
+        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="true">
+          <span id="current-book"></span>
+          <span class="caret"></span>
+        </button>
+        <ul id="book-list" class="dropdown-menu" aria-labelledby="dropdownMenu1">
+          <li><a href="javascript:;">Action</a></li>
+          <li><a href="javascript:;">Another action</a></li>
+          <li><a href="javascript:;">Something else here</a></li>
+        </ul>
+      </div>
       <form style="display: inline-block;" class="form-inline">
         <div style="width:200px" class="form-group">
           <div class="input-group">
             <div class="input-group-addon">出现概率</div>
-            <input type="text" class="form-control" id="pro-from" placeholder="最小概率">
+            <input type="text" class="form-control" id="pro-from" placeholder="最小">
             <div class="input-group-addon">‱</div>
           </div>
         </div>
         <div style="width:152px" class="form-group">
           <div class="input-group">
             <div class="input-group-addon">~</div>
-            <input type="text" class="form-control" id="pro-to" placeholder="最大概率">
+            <input type="text" class="form-control" id="pro-to" placeholder="最大">
             <div class="input-group-addon">‱</div>
           </div>
         </div>
@@ -102,17 +119,40 @@
       <span class="hg-to-bottom-arrows"></span>
     </div>
   </div>
-  <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
   <script>
     $('#pro-from').val(1)
-    $('#pro-to').val(1.5)
-    getList()
-    function getList(proFrom, proTo) {
-      var proFrom = $('#pro-from').val() || 0
-      var proTo = $('#pro-to').val() || 10000
+    $('#pro-to').val(2)
+    // 获取书名列表
+    $.ajax({
+      url: 'http://localhost:5001/book',
+      type: 'get',
+      dataType: 'json',
+      success: function (res) {
+        var data = res.data
+        if (data.length === 0) return
+        $('#book-list').empty()
+        data.forEach(function (item) {
+          $('#book-list').append('<li><a class="book-item" href="javascript:;">'+ item +'</a></li>')
+        })
+        $('#current-book').text(data[0])
+        getList()
+        console.log(data)
+      },
+    });
+    // 点击书名加载统计列表
+    $(document).on('click', '.book-item',function () {
+      var bookName = $(this).text()
+      $('#current-book').text(bookName)
+      getList()
+    })
+    // 获取统计列表
+    function getList() {
+      var bookName = $('#current-book').text()
+      var proFrom = $('#pro-from').val()
+      var proTo = $('#pro-to').val()
       $('#all-select').prop("checked", false)
       $.ajax({
-        url: 'http://localhost:5001/list?bookname=' + 'Tuesdays_with_Morrie' + '&proFrom=' + proFrom + '&proTo=' + proTo,
+        url: 'http://localhost:5001/list?bookName=' + bookName + '&proFrom=' + proFrom + '&proTo=' + proTo,
         type: 'get',
         dataType: 'json',
         success: function (res) {
@@ -130,21 +170,15 @@
         },
       });
     }
-    $.ajax({
-      url: 'http://localhost:5001/book',
-      type: 'get',
-      dataType: 'json',
-      success: function (res) {
-        var data = res.data
-        console.log(data)
-      },
-    });
+    // 页面置顶
     $('#hg-to-top').click(function () {
       window.scroll(0, 0);
     })
+    // 页面置底
     $('#hg-to-bottom').click(function () {
       window.scroll(0, document.body.clientHeight);
     })
+    // 根据页面位置显示置顶或置底的按钮
     var toTopBtn = document.getElementById('hg-to-top');
     var toBottomBtn = document.getElementById('hg-to-bottom');
     window.addEventListener('scroll', (e) => {
@@ -158,6 +192,7 @@
         toBottomBtn.style.display = 'block';
       }
     });
+    // 列表全选
     $('#all-select').click(function () {
       if ($(this).is(":checked")) {
         $('.word-select').prop('checked', true)
@@ -165,17 +200,7 @@
         $('.word-select').prop('checked', false)
       }
     })
-    // $(document).on('click', function () {
-    //   var word = $(this).parent().find('a').text()
-    //   $.ajax({
-    //     url: 'http://localhost:5001/checkWord?word=' + word,
-    //     type: 'get',
-    //     dataType: 'json',
-    //     success: function (res) {
-    //       console.log(res)
-    //     },
-    //   });
-    // })
+    // 过滤单词
     $('#addMyWord').click(function () {
       var list = []
       $('.word-item').each(function (i, item) {
@@ -194,6 +219,17 @@
         },
       });
     })
+    // $(document).on('click', function () {
+    //   var word = $(this).parent().find('a').text()
+    //   $.ajax({
+    //     url: 'http://localhost:5001/checkWord?word=' + word,
+    //     type: 'get',
+    //     dataType: 'json',
+    //     success: function (res) {
+    //       console.log(res)
+    //     },
+    //   });
+    // })
   </script>
 </body>
 

@@ -72,11 +72,17 @@ def getbook():
 @app.route('/list', methods=['get'])
 @allow_cross_domain
 def getList():
-    bookname = request.args.get('bookname')
+    bookName = request.args.get('bookName')
+    proFrom = request.args.get('proFrom')
+    proTo = request.args.get('proTo')
+    if proFrom == None:
+        proFrom = 0
+    if proTo == None:
+        proTo = 10000
     db = connect()
     cursor = db.cursor()
     # 获取 过滤掉 my_words 表中的单词，且指定出现概率范围下的，倒序排列的数据
-    sql = 'select * from ' + bookname + ' where (select count(1) as num from my_words where my_words.word =' + bookname + '.word) = 0 and probability >= %s and probability <= %s ORDER BY probability DESC'
+    sql = 'select * from ' + bookName + ' where (select count(1) as num from my_words where my_words.word =' + bookName + '.word) = 0 and probability >= %s and probability <= %s ORDER BY probability DESC'
 
     cursor.execute(sql,
                    (request.args.get('proFrom'), request.args.get('proTo')))
