@@ -13,6 +13,7 @@ from flask import make_response
 from html_downloader import download
 from html_parser import prase
 
+
 # 爬取数据
 def carw(url):
     html_cont = download(url)
@@ -25,7 +26,7 @@ def connect():
         host='localhost',
         user='root',
         password='',
-        db='test',
+        db='words',
         charset='utf8mb4')
     return connection
 
@@ -54,11 +55,12 @@ def allow_cross_domain(fun):
 @app.route('/list', methods=['get'])
 @allow_cross_domain
 def getList():
-    # print(request.args.get())
+    bookname = request.args.get('bookname')
     db = connect()
     cursor = db.cursor()
-    # 获取 过滤掉 my-words 表中的单词，且指定出现概率范围下的，倒序排列的数据
-    sql = 'select * from words where (select count(1) as num from `my-words` where `my-words`.word = words.word) = 0 and probability >= %s and probability <= %s ORDER BY probability DESC'
+    # 获取 过滤掉 my_words 表中的单词，且指定出现概率范围下的，倒序排列的数据
+    sql = 'select * from ' + bookname + ' where (select count(1) as num from my_words where my_words.word =' + bookname + '.word) = 0 and probability >= %s and probability <= %s ORDER BY probability DESC'
+
     cursor.execute(sql,
                    (request.args.get('proFrom'), request.args.get('proTo')))
     data = cursor.fetchall()
@@ -76,7 +78,7 @@ def addMyWord():
         # 获取会话指针
         with db.cursor() as cursor:
             # 创建一条 sql 语句，如果表名或字段名中带 - ，需要使用 ` 包裹
-            sql = "REPLACE INTO `my-words` (word) VALUES(%s)"
+            sql = "REPLACE INTO my_words (word) VALUES(%s)"
             # 执行sql语句
             cursor.execute(sql, (word))
             # 提交

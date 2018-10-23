@@ -18,8 +18,9 @@ import re
 import json
 import pymysql
 
-# 你需要在当前文件的目录下运行改文件
-path = './static/Tuesdays_with_Morrie.pdf'
+tablename = sys.argv[1]
+# 你需要在当前文件的目录下运行改文件 Tuesdays_with_Morrie
+path = './static/' + tablename + '.pdf'
 
 
 def parse():
@@ -53,7 +54,8 @@ def parse():
         interpreter = PDFPageInterpreter(resource, device)
 
         # 循环遍历列表，每次处理一个page的内容
-        for index, page in enumerate(doc.get_pages()):  # doc.get_pages() 获取page列表
+        for index, page in enumerate(
+                doc.get_pages()):  # doc.get_pages() 获取page列表
             # if index < 3:
             #     continue
             # if index == 4:
@@ -73,7 +75,8 @@ def parse():
                     tx = re.sub(r'(\d+|\'s|\'m|\'re|n\'t)', '', t)
                     # 去除标点符号，且将多个空格转化为一个空格
                     txt = re.sub(
-                        r'[\s+\?\.\!\/_,`:;\-$%^*\[\]\{\})(+\"\']+|[+——！，。？、‘’“”~@#￥%……&*（）：]+', ' ', tx)
+                        r'[\s+\?\.\!\/_,`:;\-$%^*\[\]\{\})(+\"\']+|[+——！，。？、‘’“”~@#￥%……&*（）：]+',
+                        ' ', tx)
                     for word in txt.split():
                         # 将单词转化为小写
                         w = word.lower()
@@ -82,25 +85,34 @@ def parse():
                             obj[w] = obj[w] + 1
                         else:
                             obj[w] = 1
+
     # 连接数据库
-    connection = pymysql.connect(host='localhost',
-                                 user='root',
-                                 password='',
-                                 db='test',
-                                 charset='utf8mb4')
+    connection = pymysql.connect(
+        host='localhost',
+        user='root',
+        password='',
+        db='words',
+        charset='utf8mb4')
+
+    # 获取会话指针
+    cursor = connection.cursor()
+
+    # 创建表
+    cursor.execute('CREATE TABLE IF NOT EXISTS ' + tablename +
+                   '(word varchar(255) NOT NULL, ' +
+                   'count int NOT NULL, probability float NOT NULL, ' +
+                   'PRIMARY KEY (word))')
 
     # 清空 words 表，避免受前一次计算结果影响
-    connection.cursor().execute('truncate table words')
+    cursor.execute('truncate table ' + tablename)
     for key in obj:
-        # 获取会话指针
-        with connection.cursor() as cursor:
-            # 创建一条sql语句
-            sql = "REPLACE INTO words (word, count, probability) VALUES(%s, %s, %s)"
-            # 执行sql语句
-            cursor.execute(
-                sql, (key, obj[key], round(obj[key] / amount * 10000, 2)))
-            # 提交
-            connection.commit()
+        # 创建一条sql语句
+        sql = 'REPLACE INTO ' + tablename + ' (word, count, probability) VALUES(%s, %s, %s)'
+        # 执行sql语句
+        cursor.execute(sql,
+                       (key, obj[key], round(obj[key] / amount * 10000, 2)))
+        # 提交
+        connection.commit()
 
     # 断开数据库连接
     connection.close()
