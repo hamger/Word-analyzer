@@ -23,6 +23,13 @@ tablename = sys.argv[1]
 path = './static/' + tablename + '.pdf'
 
 
+# 判断是否是合法的英语单词
+def is_english(keyword):
+    # all() 判断给定的可迭代参数 iterable 中的所有元素是否都为 TRUE，如果是返回 True，否则返回 False。
+    # ord() 以一个字符作为参数，返回对应的 ASCII 数值，或者 Unicode 数值
+    return all(ord(c) < 128 for c in keyword)
+
+
 def parse():
     # 以二进制读模式打开
     fb = open(path, 'rb')
@@ -53,9 +60,8 @@ def parse():
         # 创建PDF解释器
         interpreter = PDFPageInterpreter(resource, device)
 
-        # 循环遍历列表，每次处理一个page的内容
-        for index, page in enumerate(
-                doc.get_pages()):  # doc.get_pages() 获取page列表
+        # 循环遍历列表，每次处理一个page的内容 doc.get_pages() 获取page列表
+        for index, page in enumerate(doc.get_pages()):
             # if index < 3:
             #     continue
             # if index == 4:
@@ -78,6 +84,9 @@ def parse():
                         r'[\s+\?\.\!\/_,`:;\-$%^*\[\]\{\})(+\"\']+|[+——！，。？、‘’“”~@#￥%……&*（）：]+',
                         ' ', tx)
                     for word in txt.split():
+                        # 跳过非英语单词
+                        if not is_english(word):
+                            continue
                         # 将单词转化为小写
                         w = word.lower()
                         amount = amount + 1

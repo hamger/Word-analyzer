@@ -130,6 +130,15 @@
         },
       });
     }
+    $.ajax({
+      url: 'http://localhost:5001/book',
+      type: 'get',
+      dataType: 'json',
+      success: function (res) {
+        var data = res.data
+        console.log(data)
+      },
+    });
     $('#hg-to-top').click(function () {
       window.scroll(0, 0);
     })

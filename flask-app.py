@@ -51,6 +51,23 @@ def allow_cross_domain(fun):
     return wrapper_fun
 
 
+# 查询所有书名的列表
+@app.route('/book', methods=['get'])
+@allow_cross_domain
+def getbook():
+    db = connect()
+    cursor = db.cursor()
+    sql = "select table_name from information_schema.tables where table_schema='words'"
+    cursor.execute(sql)
+    data = cursor.fetchall()
+    db.close()
+    list = []
+    for x in data:
+        if not str(x[0]) == 'my_words':
+            list.append(str(x[0]))
+    return baseReturn(list)
+
+
 # 列表查询
 @app.route('/list', methods=['get'])
 @allow_cross_domain
