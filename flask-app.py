@@ -101,9 +101,9 @@ def filterWord():
         # 获取会话指针
         with db.cursor() as cursor:
             # 创建一条 sql 语句，如果表名或字段名中带 - ，需要使用 ` 包裹
-            sql = "REPLACE INTO my_words (word) VALUES(%s)"
+            sql = "REPLACE INTO my_words (word, type) VALUES(%s, %s)"
             # 执行sql语句
-            cursor.execute(sql, (word))
+            cursor.execute(sql, (word, 'normal'))
             # 提交
             db.commit()
     db.close()

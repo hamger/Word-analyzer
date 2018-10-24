@@ -170,6 +170,9 @@
     </div>
   </div>
   <script>
+    $('#word').val('hi')
+    $('#type_').val('normal')
+    // 显示更新模态框
     function fixModal(id) {
       if (id) {
         var current_row = $('#' + id)
@@ -181,7 +184,7 @@
         $('#input_word').val('')
         $('#input_phonetic').val('')
         $('#input_meaning').val('')
-        $('#input_type').val('')
+        $('#input_type').val('normal')
       }
       $('#fixModal').modal('show')
     }
@@ -209,6 +212,7 @@
         },
       });
     }
+    // 显示删除模态框
     function delModal(id) {
       var current_row = $('#' + id)
       $('#del_word').text(current_row.find('.word-word').text())
@@ -232,11 +236,8 @@
           }
           $('#delModal').modal('hide')
         },
-      });
-      
+      }); 
     }
-    $('#word').val('look')
-    // $('#type_').val('')
     getList()
     // 获取统计列表
     function getList() {
