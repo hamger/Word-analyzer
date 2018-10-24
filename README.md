@@ -13,6 +13,10 @@ python readpdf.py bookName
 
 ## Changelog
 
+### 2018.10.24
+
+> 支持过滤列表的管理
+
 ### 2018.10.23
 
 > 支持统计多本书
