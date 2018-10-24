@@ -116,32 +116,32 @@
             <h4 class="modal-title" id="myModalLabel">修改</h4>
           </div>
           <div class="modal-body">
-              <form class="form-horizontal">
-                <div class="form-group">
-                  <label for="input_word" class="col-sm-2 control-label">单词</label>
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control" id="input_word" placeholder="">
-                  </div>
+            <form class="form-horizontal">
+              <div class="form-group">
+                <label for="input_word" class="col-sm-2 control-label">单词</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" id="input_word" placeholder="">
                 </div>
-                <div class="form-group">
-                  <label for="input_phonetic" class="col-sm-2 control-label">音标</label>
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control" id="input_phonetic" placeholder="">
-                  </div>
+              </div>
+              <div class="form-group">
+                <label for="input_phonetic" class="col-sm-2 control-label">音标</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" id="input_phonetic" placeholder="">
                 </div>
-                <div class="form-group">
-                  <label for="input_meaning" class="col-sm-2 control-label">释义</label>
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control" id="input_meaning" placeholder="">
-                  </div>
+              </div>
+              <div class="form-group">
+                <label for="input_meaning" class="col-sm-2 control-label">释义</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" id="input_meaning" placeholder="">
                 </div>
-                <div class="form-group">
-                  <label for="input_type" class="col-sm-2 control-label">类型</label>
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control" id="input_type" placeholder="">
-                  </div>
+              </div>
+              <div class="form-group">
+                <label for="input_type" class="col-sm-2 control-label">类型</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" id="input_type" placeholder="">
                 </div>
-              </form>
+              </div>
+            </form>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -182,9 +182,29 @@
       $('#del_word').val(current_row.find('.word-word').text())
       $('#delModal').modal('show')
     }
-    function updateWord(x) {
-      console.log(x)
-      $('#editModal').modal('hide')
+    // 更新单词
+    function updateWord() {
+      var data = {
+        word: $('#input_word').val().trim(),
+        phonetic: $('#input_phonetic').val(),
+        meaning: $('#input_meaning').val(),
+        type: $('#input_type').val()
+      }
+      if (data.word === '') {alert('单词不能为空！'); return}
+      $.ajax({
+        url: 'http://localhost:5001/updateWord',
+        type: 'post',
+        data: JSON.stringify(data),
+        dataType: 'json',
+        success: function (res) {
+          if (res.success) {
+            getList()
+          } else {
+            alert(res.msg)
+          }
+          $('#editModal').modal('hide')
+        },
+      });
     }
     function delWord(x) {
       console.log(x)

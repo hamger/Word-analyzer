@@ -126,6 +126,24 @@ def getWordList():
     db.close()
     return baseReturn(data)
 
+# 更新过滤单词
+@app.route('/updateWord', methods=['post'])
+@allow_cross_domain
+def updateWord():
+    try:
+        word = json.loads(request.get_data())
+        db = connect()
+        cursor = db.cursor()
+        sql = "REPLACE INTO my_words (word, phonetic, meaning, type) VALUES(%s, %s, %s, %s)"
+        # word.word 报错，应该使用 word['word']
+        cursor.execute(sql, (word['word'], word['phonetic'], word['meaning'], word['type']))
+        # 提交
+        db.commit()
+        db.close()
+        return baseReturn('', '加入成功')
+    except ValueError:  
+        return baseReturn(ValueError, '更新失败', False)
+
 
 # # 查询单词
 # @app.route('/checkWord', methods=['get'])
