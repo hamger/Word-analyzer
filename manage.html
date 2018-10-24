@@ -89,9 +89,9 @@
           </div>
         </div>
         <button onclick="getList()" type="button" class="btn btn-primary">查询</button>
-        <button onclick="fixModal()" type="button" class="btn btn-default">添加单词</button>
       </form>
-      <button type="button" class="btn btn-default" id='manageWord'><a href="./index.html">首页</a></button>
+      <button onclick="fixModal()" type="button" class="btn btn-default" id='filterWord'>添加单词</button>
+      <button onclick="toward('./index.html')" type="button" class="btn btn-default" id='manageWord'>首页</button>
     </div>
     <table id="word-table" class="table table-hover">
       <tr>
@@ -257,8 +257,8 @@
               '</td><td class="word-meaning">' + e.meaning +
               '</td><td class="word-type">' + e.type +
               '</td><td>' +
-              '<button onclick="fixModal(\'word-id-' + e.word + '\')" type="button" class="btn btn-primary btn-xs" data-toggle="modal">编辑</button> ' +
-              '<button onclick="delModal(\'word-id-' + e.word + '\')" type="button" class="btn btn-primary btn-xs" data-toggle="modal">删除</button>' +
+              '<button onclick="fixModal(\'word-id-' + e.word + '\')" type="button" class="btn btn-info btn-xs" data-toggle="modal">编辑</button> ' +
+              '<button onclick="delModal(\'word-id-' + e.word + '\')" type="button" class="btn btn-danger btn-xs" data-toggle="modal">删除</button>' +
               '</td></tr>')
           });
         },
@@ -286,6 +286,9 @@
         toBottomBtn.style.display = 'block';
       }
     });
+    function toward (url) {
+      window.location.href = url
+    }
   </script>
 </body>
 

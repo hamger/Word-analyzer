@@ -128,7 +128,7 @@
         <button onclick="getList()" type="button" class="btn btn-primary">查询</button>
       </form>
       <button type="button" class="btn btn-default" id='filterWord'>过滤</button>
-      <button type="button" class="btn btn-default" id='manageWord'><a href="./manage.html">管理过滤列表</a></button>
+      <button onclick="toward('./manage.html')" type="button" class="btn btn-default" id='manageWord'>管理过滤列表</button>
     </div>
     <table id="word-table" class="table table-hover">
       <tr>
@@ -257,6 +257,9 @@
     //     },
     //   });
     // })
+    function toward (url) {
+      window.location.href = url
+    }
   </script>
 </body>
 
