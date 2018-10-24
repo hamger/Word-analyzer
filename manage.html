@@ -108,14 +108,90 @@
     <div id="hg-to-bottom">
       <span class="hg-to-bottom-arrows"></span>
     </div>
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">修改</h4>
+          </div>
+          <div class="modal-body">
+              <form class="form-horizontal">
+                <div class="form-group">
+                  <label for="input_word" class="col-sm-2 control-label">单词</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="input_word" placeholder="">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="input_phonetic" class="col-sm-2 control-label">音标</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="input_phonetic" placeholder="">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="input_meaning" class="col-sm-2 control-label">释义</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="input_meaning" placeholder="">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="input_type" class="col-sm-2 control-label">类型</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="input_type" placeholder="">
+                  </div>
+                </div>
+              </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            <button type="button" onclick="updateWord()" class="btn btn-primary">确定</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="delModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">删除</h4>
+          </div>
+          <div class="modal-body">
+            确定要删除 <span id="del_word"></span> 吗？
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            <button type="button" onclick="delWord()" class="btn btn-primary">确定</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   <script>
-    function aaac(x) {
-      console.log(x)
-      $('#myModal').modal('hide')
+    function editModal(id) {
+      var current_row = $('#' + id)
+      $('#input_word').val(current_row.find('.word-word').text())
+      $('#input_phonetic').val(current_row.find('.word-phonetic').text())
+      $('#input_meaning').val(current_row.find('.word-meaning').text())
+      $('#input_type').val(current_row.find('.word-type').text())
+      $('#editModal').modal('show')
     }
-    $('#word').val('looking')
-    $('#type_').val('')
+    function delModal(id) {
+      var current_row = $('#' + id)
+      $('#del_word').val(current_row.find('.word-word').text())
+      $('#delModal').modal('show')
+    }
+    function updateWord(x) {
+      console.log(x)
+      $('#editModal').modal('hide')
+    }
+    function delWord(x) {
+      console.log(x)
+      $('#delModal').modal('hide')
+    }
+    $('#word').val('look')
+    // $('#type_').val('')
     getList()
     // 获取统计列表
     function getList() {
@@ -129,17 +205,41 @@
           var data = res.data
           $('.word-item').remove()
           data.forEach(function (e, i) {
-            $('#word-table').append('<tr class="word-item"><td>' + (i + 1) +
-              '</td><td><a target="_blank" href="http://dict.youdao.com/search?q=' + e.word + '">' + e.word + '<a>' +
-              '</td><td>' + (e.phonetic || '') +
-              '</td><td>' + (e.meaning || '') +
-              '</td><td>' + (e.type || '') +
-              '</td><td>' + '<span>编辑</span>' + ' <span>删除</span>' +
+            $('#word-table').append('<tr id="word-id-' + e.word + '" class="word-item"><td>' + (i + 1) +
+              '</td><td><a class="word-word" target="_blank" href="http://dict.youdao.com/search?q=' + e.word + '">' + e.word + '<a>' +
+              '</td><td class="word-phonetic">' + e.phonetic +
+              '</td><td class="word-meaning">' + e.meaning +
+              '</td><td class="word-type">' + e.type +
+              '</td><td>' +
+              '<button onclick="editModal(\'word-id-' + e.word + '\')" type="button" class="btn btn-primary btn-xs" data-toggle="modal">编辑</button> ' +
+              '<button onclick="delModal(\'word-id-' + e.word + '\')" type="button" class="btn btn-primary btn-xs" data-toggle="modal">删除</button>' +
               '</td></tr>')
           });
         },
       });
     }
+    // 页面置顶
+    $('#hg-to-top').click(function () {
+      window.scroll(0, 0);
+    })
+    // 页面置底
+    $('#hg-to-bottom').click(function () {
+      window.scroll(0, document.body.clientHeight);
+    })
+    // 根据页面位置显示置顶或置底的按钮
+    var toTopBtn = document.getElementById('hg-to-top');
+    var toBottomBtn = document.getElementById('hg-to-bottom');
+    window.addEventListener('scroll', (e) => {
+      var scrollTop = document.documentElement.scrollTop || window.pageYOffset || document.body.scrollTop;
+      if (scrollTop > window.screen.availHeight) {
+        toTopBtn.style.display = 'block';
+        toBottomBtn.style.display = 'none';
+      }
+      else {
+        toTopBtn.style.display = 'none';
+        toBottomBtn.style.display = 'block';
+      }
+    });
   </script>
 </body>
 
