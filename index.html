@@ -7,96 +7,13 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>word-counter</title>
   <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./common.css">
   <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
   <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      font-size: 14px;
-    }
-    #container {
-      padding: 20px;
-    }
-    #top-box {
-      margin-bottom: 20px;
-    }
-    .input-group-box {
-      overflow: hidden;
-      display: inline-block;
-      width: 100px;
-    }
-    #filterWord {
-      margin-left: 20px;
-    }
-    #manageWord {
-      float: right;
-    }
-    #hg-to-top,  #hg-to-bottom{
-      cursor: pointer;
-      display: none;
-      position: fixed;
-      background-color: rgba(70, 70, 70, 0.5);
-      z-index: 99;
-      height: 30px;
-      width: 30px;
-      border-radius: 6px;
-      bottom: 20px;
-      right: 20px;
-    }
-    .hg-to-top-arrows {
-      display: inline-block;
-      height: 12px;
-      width: 12px;
-      border-left: 2px solid #fff;
-      border-top: 2px solid #fff;
-      position: absolute;
-      top: 13px;
-      left: 9px;
-      transform: rotate(45deg);
-    }
-    .hg-to-bottom-arrows {
-      display: inline-block;
-      height: 12px;
-      width: 12px;
-      border-left: 2px solid #fff;
-      border-top: 2px solid #fff;
-      position: absolute;
-      top: 7px;
-      left: 9px;
-      transform: rotate(-135deg);
-    }
-    .dropdown {
-      display: inline-block;
-    }
-  </style>
 </head>
 
 <body>
   <div id='container'>
-    <!-- Button trigger modal -->
-    <button onclick="aaab('myModal')" type="button" class="btn btn-primary btn-lg" data-toggle="modal">
-      Launch demo modal
-    </button>
-
-    <!-- Modal -->
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="myModalLabel">Modal title</h4>
-          </div>
-          <div class="modal-body">
-            ...
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="button" onclick="aaac('myModal')" class="btn btn-primary">Save changes</button>
-          </div>
-        </div>
-      </div>
-    </div>
     <div id='top-box'>
       <div class="dropdown">
         <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown"
@@ -146,6 +63,7 @@
       <span class="hg-to-bottom-arrows"></span>
     </div>
   </div>
+  <script src="./common.js"></script>
   <script>
     $('#pro-from').val(1)
     $('#pro-to').val(2)
@@ -197,28 +115,6 @@
         },
       });
     }
-    // 页面置顶
-    $('#hg-to-top').click(function () {
-      window.scroll(0, 0);
-    })
-    // 页面置底
-    $('#hg-to-bottom').click(function () {
-      window.scroll(0, document.body.clientHeight);
-    })
-    // 根据页面位置显示置顶或置底的按钮
-    var toTopBtn = document.getElementById('hg-to-top');
-    var toBottomBtn = document.getElementById('hg-to-bottom');
-    window.addEventListener('scroll', (e) => {
-      var scrollTop = document.documentElement.scrollTop || window.pageYOffset || document.body.scrollTop;
-      if (scrollTop > window.screen.availHeight) {
-        toTopBtn.style.display = 'block';
-        toBottomBtn.style.display = 'none';
-      }
-      else {
-        toTopBtn.style.display = 'none';
-        toBottomBtn.style.display = 'block';
-      }
-    });
     // 列表全选
     $('#all-select').click(function () {
       if ($(this).is(":checked")) {
@@ -257,9 +153,6 @@
     //     },
     //   });
     // })
-    function toward (url) {
-      window.location.href = url
-    }
   </script>
 </body>
 
