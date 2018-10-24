@@ -91,10 +91,10 @@ def getList():
     return baseReturn(data)
 
 
-# 添加我掌握的单词
-@app.route('/addMyWord', methods=['post'])
+# 过滤单词
+@app.route('/filterWord', methods=['post'])
 @allow_cross_domain
-def addMyWord():
+def filterWord():
     words = json.loads(request.get_data())
     db = connect()
     for word in words:
@@ -110,15 +110,31 @@ def addMyWord():
     return baseReturn('', '加入成功')
 
 
-# 查询单词
-@app.route('/checkWord', methods=['get'])
+# 过滤列表查询
+@app.route('/wordList', methods=['get'])
 @allow_cross_domain
-def checkWord():
+def getWordList():
     word = request.args.get('word')
-    url = 'http://dict.youdao.com/search?q=' + word
-    data = carw(url)
-    return baseReturn(data, '查询成功')
+    type_ = request.args.get('type')
+    sql = "select * from my_words where word like '" + word + "%' and type like '" + type_ + "%'"
+    db = connect()
+    # 游标设置为字典类型
+    cursor = db.cursor(cursor=pymysql.cursors.DictCursor)
+    cursor.execute(sql)
+    data = cursor.fetchall()
+    print(data)
+    db.close()
+    return baseReturn(data)
 
+
+# # 查询单词
+# @app.route('/checkWord', methods=['get'])
+# @allow_cross_domain
+# def checkWord():
+#     word = request.args.get('word')
+#     url = 'http://dict.youdao.com/search?q=' + word
+#     data = carw(url)
+#     return baseReturn(data, '查询成功')
 
 if __name__ == '__main__':
     # 开启热更新

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>word-manage</title>
+  <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+  <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+  <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      font-size: 14px;
+    }
+    #container {
+      padding: 20px;
+    }
+    #top-box {
+      margin-bottom: 20px;
+    }
+    .input-group-box {
+      overflow: hidden;
+      display: inline-block;
+      width: 100px;
+    }
+    #filterWord {
+      margin-left: 20px;
+    }
+    #manageWord {
+      float: right;
+    }
+    #hg-to-top,  #hg-to-bottom{
+      cursor: pointer;
+      display: none;
+      position: fixed;
+      background-color: rgba(70, 70, 70, 0.5);
+      z-index: 99;
+      height: 30px;
+      width: 30px;
+      border-radius: 6px;
+      bottom: 20px;
+      right: 20px;
+    }
+    .hg-to-top-arrows {
+      display: inline-block;
+      height: 12px;
+      width: 12px;
+      border-left: 2px solid #fff;
+      border-top: 2px solid #fff;
+      position: absolute;
+      top: 13px;
+      left: 9px;
+      transform: rotate(45deg);
+    }
+    .hg-to-bottom-arrows {
+      display: inline-block;
+      height: 12px;
+      width: 12px;
+      border-left: 2px solid #fff;
+      border-top: 2px solid #fff;
+      position: absolute;
+      top: 7px;
+      left: 9px;
+      transform: rotate(-135deg);
+    }
+    .dropdown {
+      display: inline-block;
+    }
+  </style>
+</head>
+
+<body>
+  <div id='container'>
+    <div id='top-box'>
+      <form style="display: inline-block;" class="form-inline">
+        <div style="width:200px" class="form-group">
+          <div class="input-group">
+            <div class="input-group-addon">单词</div>
+            <input type="text" class="form-control" id="word" placeholder="">
+          </div>
+        </div>
+        <div style="width:200px" class="form-group">
+          <div class="input-group">
+            <div class="input-group-addon">类型</div>
+            <input type="text" class="form-control" id="type_" placeholder="">
+          </div>
+        </div>
+        <button onclick="getList()" type="button" class="btn btn-primary">查询</button>
+      </form>
+      <button type="button" class="btn btn-default" id='manageWord'><a href="./index.html">首页</a></button>
+    </div>
+    <table id="word-table" class="table table-hover">
+      <tr>
+        <th>序号</th>
+        <th>单词</th>
+        <th>音标</th>
+        <th>释义</th>
+        <th>类型</th>
+        <th>操作</th>
+      </tr>
+    </table>
+    <div id="hg-to-top">
+      <span class="hg-to-top-arrows"></span>
+    </div>
+    <div id="hg-to-bottom">
+      <span class="hg-to-bottom-arrows"></span>
+    </div>
+  </div>
+  <script>
+    function aaac(x) {
+      console.log(x)
+      $('#myModal').modal('hide')
+    }
+    $('#word').val('looking')
+    $('#type_').val('')
+    getList()
+    // 获取统计列表
+    function getList() {
+      var word = $('#word').val()
+      var type_ = $('#type_').val()
+      $.ajax({
+        url: 'http://localhost:5001/wordList?word=' + word + '&type=' + type_,
+        type: 'get',
+        dataType: 'json',
+        success: function (res) {
+          var data = res.data
+          $('.word-item').remove()
+          data.forEach(function (e, i) {
+            $('#word-table').append('<tr class="word-item"><td>' + (i + 1) +
+              '</td><td><a target="_blank" href="http://dict.youdao.com/search?q=' + e.word + '">' + e.word + '<a>' +
+              '</td><td>' + (e.phonetic || '') +
+              '</td><td>' + (e.meaning || '') +
+              '</td><td>' + (e.type || '') +
+              '</td><td>' + '<span>编辑</span>' + ' <span>删除</span>' +
+              '</td></tr>')
+          });
+        },
+      });
+    }
+  </script>
+</body>
+
+</html>
