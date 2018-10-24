@@ -89,6 +89,7 @@
           </div>
         </div>
         <button onclick="getList()" type="button" class="btn btn-primary">查询</button>
+        <button onclick="fixModal()" type="button" class="btn btn-default">添加单词</button>
       </form>
       <button type="button" class="btn btn-default" id='manageWord'><a href="./index.html">首页</a></button>
     </div>
@@ -108,7 +109,7 @@
     <div id="hg-to-bottom">
       <span class="hg-to-bottom-arrows"></span>
     </div>
-    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal fade" id="fixModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -145,7 +146,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-            <button type="button" onclick="updateWord()" class="btn btn-primary">确定</button>
+            <button type="button" onclick="fixWord()" class="btn btn-primary">确定</button>
           </div>
         </div>
       </div>
@@ -169,21 +170,23 @@
     </div>
   </div>
   <script>
-    function editModal(id) {
-      var current_row = $('#' + id)
-      $('#input_word').val(current_row.find('.word-word').text())
-      $('#input_phonetic').val(current_row.find('.word-phonetic').text())
-      $('#input_meaning').val(current_row.find('.word-meaning').text())
-      $('#input_type').val(current_row.find('.word-type').text())
-      $('#editModal').modal('show')
-    }
-    function delModal(id) {
-      var current_row = $('#' + id)
-      $('#del_word').val(current_row.find('.word-word').text())
-      $('#delModal').modal('show')
+    function fixModal(id) {
+      if (id) {
+        var current_row = $('#' + id)
+        $('#input_word').val(current_row.find('.word-word').text())
+        $('#input_phonetic').val(current_row.find('.word-phonetic').text())
+        $('#input_meaning').val(current_row.find('.word-meaning').text())
+        $('#input_type').val(current_row.find('.word-type').text())
+      } else {
+        $('#input_word').val('')
+        $('#input_phonetic').val('')
+        $('#input_meaning').val('')
+        $('#input_type').val('')
+      }
+      $('#fixModal').modal('show')
     }
     // 更新单词
-    function updateWord() {
+    function fixWord() {
       var data = {
         word: $('#input_word').val().trim(),
         phonetic: $('#input_phonetic').val(),
@@ -192,7 +195,7 @@
       }
       if (data.word === '') {alert('单词不能为空！'); return}
       $.ajax({
-        url: 'http://localhost:5001/updateWord',
+        url: 'http://localhost:5001/fixWord',
         type: 'post',
         data: JSON.stringify(data),
         dataType: 'json',
@@ -202,13 +205,35 @@
           } else {
             alert(res.msg)
           }
-          $('#editModal').modal('hide')
+          $('#fixModal').modal('hide')
         },
       });
     }
-    function delWord(x) {
-      console.log(x)
-      $('#delModal').modal('hide')
+    function delModal(id) {
+      var current_row = $('#' + id)
+      $('#del_word').text(current_row.find('.word-word').text())
+      $('#delModal').modal('show')
+    }
+    // 删除单词
+    function delWord() {
+      var data = {
+        word: $('#del_word').text()
+      }
+      $.ajax({
+        url: 'http://localhost:5001/delWord',
+        type: 'post',
+        data: JSON.stringify(data),
+        dataType: 'json',
+        success: function (res) {
+          if (res.success) {
+            getList()
+          } else {
+            alert(res.msg)
+          }
+          $('#delModal').modal('hide')
+        },
+      });
+      
     }
     $('#word').val('look')
     // $('#type_').val('')
@@ -231,7 +256,7 @@
               '</td><td class="word-meaning">' + e.meaning +
               '</td><td class="word-type">' + e.type +
               '</td><td>' +
-              '<button onclick="editModal(\'word-id-' + e.word + '\')" type="button" class="btn btn-primary btn-xs" data-toggle="modal">编辑</button> ' +
+              '<button onclick="fixModal(\'word-id-' + e.word + '\')" type="button" class="btn btn-primary btn-xs" data-toggle="modal">编辑</button> ' +
               '<button onclick="delModal(\'word-id-' + e.word + '\')" type="button" class="btn btn-primary btn-xs" data-toggle="modal">删除</button>' +
               '</td></tr>')
           });

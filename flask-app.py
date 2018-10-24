@@ -116,33 +116,53 @@ def filterWord():
 def getWordList():
     word = request.args.get('word')
     type_ = request.args.get('type')
+    # 字符串需要用单引号包裹
     sql = "select * from my_words where word like '" + word + "%' and type like '" + type_ + "%'"
     db = connect()
     # 游标设置为字典类型
     cursor = db.cursor(cursor=pymysql.cursors.DictCursor)
     cursor.execute(sql)
     data = cursor.fetchall()
-    print(data)
     db.close()
     return baseReturn(data)
 
-# 更新过滤单词
-@app.route('/updateWord', methods=['post'])
+
+# 更新过滤表中单词
+@app.route('/fixWord', methods=['post'])
 @allow_cross_domain
-def updateWord():
+def fixWord():
     try:
         word = json.loads(request.get_data())
         db = connect()
         cursor = db.cursor()
-        sql = "REPLACE INTO my_words (word, phonetic, meaning, type) VALUES(%s, %s, %s, %s)"
+        sql = "replace into my_words (word, phonetic, meaning, type) values(%s, %s, %s, %s)"
         # word.word 报错，应该使用 word['word']
-        cursor.execute(sql, (word['word'], word['phonetic'], word['meaning'], word['type']))
-        # 提交
+        cursor.execute(
+            sql,
+            (word['word'], word['phonetic'], word['meaning'], word['type']))
         db.commit()
         db.close()
-        return baseReturn('', '加入成功')
-    except ValueError:  
+        return baseReturn('', '更新成功')
+    except ValueError:
         return baseReturn(ValueError, '更新失败', False)
+
+
+# 删除过滤表中单词
+@app.route('/delWord', methods=['post'])
+@allow_cross_domain
+def delWord():
+    try:
+        word = json.loads(request.get_data())
+        db = connect()
+        cursor = db.cursor()
+        # 使用了 %s，就不能用引号包裹
+        sql = "delete from my_words where word=%s"
+        cursor.execute(sql, (word['word']))
+        db.commit()
+        db.close()
+        return baseReturn('', '删除成功')
+    except ValueError:
+        return baseReturn(ValueError, '删除失败', False)
 
 
 # # 查询单词
