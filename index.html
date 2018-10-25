@@ -48,13 +48,17 @@
       <button onclick="toward('./manage.html')" type="button" class="btn btn-default" id='manageWord'>管理过滤列表</button>
     </div>
     <table id="word-table" class="table table-hover">
-      <tr>
-        <th><label class="checkbox-inline"><input id="all-select" type="checkbox" value="">全选</label></th>
-        <th>单词</th>
-        <!-- <th>释义</th> -->
-        <th>出现次数</th>
-        <th>出现概率（‱）</th>
-      </tr>
+      <thead>
+        <tr>
+          <th><label class="checkbox-inline"><input id="all-select" type="checkbox" value="">全选</label></th>
+          <th>单词</th>
+          <!-- <th>释义</th> -->
+          <th>出现次数</th>
+          <th>出现概率（‱）</th>
+        </tr>
+      </thead>
+      <tbody id="word-tbody">
+      </tbody>
     </table>
     <div id="hg-to-top">
       <span class="hg-to-top-arrows"></span>
@@ -102,16 +106,18 @@
         dataType: 'json',
         success: function (res) {
           var data = res.data
-          $('.word-item').remove()
+          var str = ''
+          $('#word-tbody').empty()
           data.forEach(function (e, i) {
-            $('#word-table').append('<tr class="word-item"><td><label class="checkbox-inline"><input class="word-select" type="checkbox" value="">' +
+            str += '<tr class="word-item"><td><label class="checkbox-inline"><input class="word-select" type="checkbox" value="">' +
               (i + 1) + '</label>' +
               '</td><td><a target="_blank" href="http://dict.youdao.com/search?q=' + e[0] + '">' + e[0] + '<a>' +
               // '</td><td class="word-meaning">' + '点击查看' +
               '</td><td>' + e[1] +
               '</td><td>' + e[2] +
-              '</td></tr>')
+              '</td></tr>'
           });
+          $('#word-tbody').append(str)
         },
       });
     }

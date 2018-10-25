@@ -10,15 +10,8 @@ app = Flask(__name__)
 
 from functools import wraps
 from flask import make_response
-from html_downloader import download
-from html_parser import prase
 
-
-# 爬取数据
-def carw(url):
-    html_cont = download(url)
-    return prase(html_cont)
-
+from html_parser import hello
 
 # 连接数据库
 def connect():
@@ -72,6 +65,7 @@ def getbook():
 @app.route('/list', methods=['get'])
 @allow_cross_domain
 def getList():
+    hello()
     bookName = request.args.get('bookName')
     proFrom = request.args.get('proFrom')
     proTo = request.args.get('proTo')
