@@ -11,7 +11,8 @@ app = Flask(__name__)
 from functools import wraps
 from flask import make_response
 
-from html_parser import hello
+from test import h
+from test.spider import hi
 
 # 连接数据库
 def connect():
@@ -65,7 +66,8 @@ def getbook():
 @app.route('/list', methods=['get'])
 @allow_cross_domain
 def getList():
-    hello()
+    h.hello()
+    hi.hi()
     bookName = request.args.get('bookName')
     proFrom = request.args.get('proFrom')
     proTo = request.args.get('proTo')

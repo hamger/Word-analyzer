@@ -4,10 +4,6 @@ from bs4 import BeautifulSoup as bs
 import re
 
 
-def hello(str='hello world'):
-    print(str)
-
-
 def _get_data(soup):
     res_data = {}
     index = 0
