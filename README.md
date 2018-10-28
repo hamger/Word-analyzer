@@ -14,7 +14,7 @@ python readpdf.py bookName
 ```
 > `bookName` 只能由A-Z，a-z，0-9和_下划线组成
 
-统计成功后，终端会返回这本书的总次数，打开`index.html`即可查看统计结果。
+终端返回本书的总词数时说明统计结束，打开`index.html`即可查看和管理统计结果。
 
 
 ## Changelog
