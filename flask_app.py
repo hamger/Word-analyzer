@@ -5,25 +5,12 @@ from flask import Flask
 from flask import request, jsonify
 import json
 import pymysql
+from db_connection import connect
 
 app = Flask(__name__)
 
 from functools import wraps
 from flask import make_response
-
-from test import h
-from test.spider import hi
-
-# 连接数据库
-def connect():
-    connection = pymysql.connect(
-        host='localhost',
-        user='root',
-        password='',
-        db='words',
-        charset='utf8mb4')
-    return connection
-
 
 # 规定接口的数据返回格式
 def baseReturn(data='', msg='OK', success=True):
@@ -66,8 +53,6 @@ def getbook():
 @app.route('/list', methods=['get'])
 @allow_cross_domain
 def getList():
-    h.hello()
-    hi.hi()
     bookName = request.args.get('bookName')
     proFrom = request.args.get('proFrom')
     proTo = request.args.get('proTo')

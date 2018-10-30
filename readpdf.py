@@ -16,7 +16,7 @@ from pdfminer.layout import LTTextBoxHorizontal, LAParams
 from pdfminer.pdfinterp import PDFTextExtractionNotAllowed
 import re
 import json
-import pymysql
+from db_connection import connect
 
 tablename = sys.argv[1]
 # 你需要在当前文件的目录下运行改文件 Tuesdays_with_Morrie
@@ -95,16 +95,9 @@ def parse():
                         else:
                             obj[w] = 1
 
-    # 连接数据库
-    connection = pymysql.connect(
-        host='localhost',
-        user='root',
-        password='',
-        db='words',
-        charset='utf8mb4')
-
+    db = connect()
     # 获取会话指针
-    cursor = connection.cursor()
+    cursor = db.cursor()
 
     # 创建表
     cursor.execute('CREATE TABLE IF NOT EXISTS ' + tablename +
@@ -121,10 +114,10 @@ def parse():
         cursor.execute(sql,
                        (key, obj[key], round(obj[key] / amount * 10000, 2)))
         # 提交
-        connection.commit()
+        db.commit()
 
     # 断开数据库连接
-    connection.close()
+    db.close()
     print("总词数: %s" % amount)
     # print('’' in obj)
     # print(json.dumps(obj, sort_keys=True, indent=4, separators=(',', ':')))
