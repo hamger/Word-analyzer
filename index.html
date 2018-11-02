@@ -52,7 +52,7 @@
         <tr>
           <th><label class="checkbox-inline"><input id="all-select" type="checkbox" value="">全选</label></th>
           <th>单词</th>
-          <!-- <th>释义</th> -->
+          <th>释义</th>
           <th>出现次数</th>
           <th>出现概率（‱）</th>
         </tr>
@@ -111,7 +111,7 @@
             str += '<tr class="word-item"><td><label class="checkbox-inline"><input class="word-select" type="checkbox" value="">' +
               (i + 1) + '</label>' +
               '</td><td><a target="_blank" href="http://dict.youdao.com/search?q=' + e[0] + '">' + e[0] + '<a>' +
-              // '</td><td class="word-meaning">' + '点击查看' +
+              '</td><td class="word-meaning">' + '点击查看' +
               '</td><td>' + e[1] +
               '</td><td>' + e[2] +
               '</td></tr>'
@@ -147,17 +147,34 @@
         },
       });
     })
-    // $(document).on('click', function () {
-    //   var word = $(this).parent().find('a').text()
-    //   $.ajax({
-    //     url: 'http://localhost:5001/checkWord?word=' + word,
-    //     type: 'get',
-    //     dataType: 'json',
-    //     success: function (res) {
-    //       console.log(res)
-    //     },
-    //   });
-    // })
+    $(document).on('click', '.word-meaning', function () {
+      var self = this
+      var word = $(self).parent().find('a').text()
+      console.log(word)
+      $.ajax({
+        url: 'http://localhost:5001/checkWord?word=' + word,
+        type: 'get',
+        dataType: 'json',
+        success: function (res) {
+          $(self).empty()
+          if (res.success) {
+            var str = ''
+            var data = res.data
+            if (data.phonetic.length === 3) {
+              str += '<div>英' + data.phonetic[0] + ' 美' + data.phonetic[0] + '</div>'
+            } else {
+              str += '<div>' + data.phonetic[0] + '</div>'
+            }
+            data.meaning.forEach(function (item) {
+              str += '<div>' + item + '</div>'
+            })
+            $(self).html(str)
+          } else {
+            $(self).html('找不到释义')
+          }
+        }
+      });
+    })
   </script>
 </body>
 

@@ -11,6 +11,14 @@ app = Flask(__name__)
 
 from functools import wraps
 from flask import make_response
+import html_downloader, html_parser
+
+
+# 爬取网页信息
+def carw(url):
+    text = html_downloader.download(url)
+    return html_parser.prase(text)
+
 
 # 规定接口的数据返回格式
 def baseReturn(data='', msg='OK', success=True):
@@ -146,14 +154,17 @@ def delWord():
         return baseReturn(ValueError, '删除失败', False)
 
 
-# # 查询单词
-# @app.route('/checkWord', methods=['get'])
-# @allow_cross_domain
-# def checkWord():
-#     word = request.args.get('word')
-#     url = 'http://dict.youdao.com/search?q=' + word
-#     data = carw(url)
-#     return baseReturn(data, '查询成功')
+# 查询单词
+@app.route('/checkWord', methods=['get'])
+@allow_cross_domain
+def checkWord():
+    word = request.args.get('word')
+    print(word)
+    url = 'http://dict.youdao.com/search?q=' + word
+    data = carw(url)
+    print(data)
+    return baseReturn(data, '查询成功')
+
 
 if __name__ == '__main__':
     # 开启热更新

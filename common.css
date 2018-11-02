@@ -52,3 +52,6 @@
 .dropdown {
   display: inline-block;
 }
+.word-meaning {
+  cursor: pointer;
+}
